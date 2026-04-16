@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Generated image scratch outputs
+nanobanana-output/
+sprocket-variants/
+
+# Local IDE/harness configs
+.claude/
+.vercel/
