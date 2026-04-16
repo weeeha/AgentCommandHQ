@@ -3,9 +3,11 @@
 import { mockFeed } from "@/data";
 import { useCockpitStore } from "@/store/use-cockpit";
 import { FeedItemRow } from "./feed-item-row";
+import { AgentPortrait } from "./agent-portrait";
 import { StatusDot } from "@/components/primitives/status-dot";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import type { AgentStatus } from "@/types";
 
 export function HomeView() {
   const agents = useCockpitStore((s) => s.agents);
@@ -49,12 +51,43 @@ export function HomeView() {
           <h2 className="mb-3 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
             Squad
           </h2>
-          <div className="space-y-2 font-mono text-[11px]">
-            <Row label="Ready" value={`${ready}/${agents.length}`} dot="ready" />
-            <Row label="Deployed" value={`${deployed}`} dot="deployed" />
-            <Row label="Cooldown" value={`${cooling}`} dot="cooldown" />
+          <ul className="grid grid-cols-4 gap-2">
+            {agents.map((agent) => (
+              <li
+                key={agent.id}
+                className="flex flex-col items-center gap-1"
+                title={`${agent.callsign} · ${agent.status}`}
+              >
+                <div className="relative">
+                  <AgentPortrait callsign={agent.callsign} size={56} />
+                  <StatusDot
+                    variant={agent.status as AgentStatus}
+                    className="absolute right-0.5 top-0.5 ring-1 ring-card/80"
+                  />
+                </div>
+                <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted-foreground">
+                  {agent.callsign}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 border-t border-border/30 pt-2 font-mono text-[10px] text-muted-foreground">
+            <span>
+              <span className="text-foreground tabular-nums">{ready}</span>/
+              {agents.length} ready
+            </span>
+            <span>
+              <span className="text-foreground tabular-nums">{deployed}</span>{" "}
+              deployed
+            </span>
+            <span>
+              <span className="text-foreground tabular-nums">{cooling}</span>{" "}
+              cooling
+            </span>
             {critical > 0 && (
-              <Row label="Critical" value={`${critical}`} dot="critical" />
+              <span className="text-destructive">
+                <span className="tabular-nums">{critical}</span> critical
+              </span>
             )}
           </div>
           <Link
@@ -146,22 +179,3 @@ export function HomeView() {
   );
 }
 
-function Row({
-  label,
-  value,
-  dot,
-}: {
-  label: string;
-  value: string;
-  dot: "ready" | "deployed" | "cooldown" | "critical";
-}) {
-  return (
-    <div className="flex items-center justify-between gap-3 rounded-sm px-1 py-1">
-      <div className="flex items-center gap-2">
-        <StatusDot variant={dot} />
-        <span className="text-muted-foreground">{label}</span>
-      </div>
-      <span className="tabular-nums text-foreground">{value}</span>
-    </div>
-  );
-}
