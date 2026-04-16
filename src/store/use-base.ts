@@ -5,17 +5,8 @@ import type {
   BaseResources,
   RoomTypeKey,
   GridSize,
-  AgentPosition,
-  CameraState,
-  SimState,
-  SimEvent,
-  SelectedEntity,
-  PanelMode,
-  AgentAnimState,
-  AgentFacing,
 } from "@/types";
 import { createDefaultShipLayout, roomTypeDefs } from "@/data";
-import { TILE_SIZE } from "@/engine/constants";
 
 // ─────────────────────────────────────────────────────────────
 // Helpers (pure functions, exported for use in components)
@@ -57,63 +48,19 @@ export function canBuildAt(
   return true;
 }
 
-export function getRoomCenterTile(room: RoomInstance): {
-  col: number;
-  row: number;
-} {
-  const spans = SIZE_SPANS[room.gridSize];
-  return {
-    col: room.anchor.col + Math.floor(spans.cols / 2),
-    row: room.anchor.row + Math.floor(spans.rows / 2),
-  };
-}
-
-function makeInitialPositions(rooms: RoomInstance[]): AgentPosition[] {
-  const positions: AgentPosition[] = [];
-  for (const room of rooms) {
-    const center = getRoomCenterTile(room);
-    for (const agentId of room.assignedAgentIds) {
-      positions.push({
-        agentId,
-        roomId: room.id,
-        tileCol: center.col,
-        tileRow: center.row,
-        pixelX: center.col * TILE_SIZE + TILE_SIZE / 2,
-        pixelY: center.row * TILE_SIZE + TILE_SIZE / 2,
-        animState: "idle",
-        animFrame: 0,
-        facing: "down",
-      });
-    }
-  }
-  return positions;
-}
-
 // ─────────────────────────────────────────────────────────────
 // Store
 // ─────────────────────────────────────────────────────────────
 
 interface BaseStore {
-  // Data
   ship: ShipLayout;
   rooms: RoomInstance[];
   baseResources: BaseResources;
 
-  // Legacy selection (preserved for compatibility)
   selectedCellPos: { row: number; col: number } | null;
   selectedRoomId: string | null;
   buildMenuOpen: boolean;
 
-  // Game engine state
-  agentPositions: AgentPosition[];
-  camera: CameraState;
-  simulation: SimState;
-  hoveredTile: { row: number; col: number } | null;
-  hoveredEntity: SelectedEntity | null;
-  selectedEntity: SelectedEntity | null;
-  panelOpen: PanelMode;
-
-  // Legacy actions
   selectCell: (pos: { row: number; col: number } | null) => void;
   selectRoom: (id: string | null) => void;
   openBuildMenu: () => void;
@@ -126,37 +73,11 @@ interface BaseStore {
   demolishRoom: (roomId: string) => void;
   assignAgent: (roomId: string, agentId: string) => void;
   unassignAgent: (roomId: string, agentId: string) => void;
-
-  // Engine actions
-  setCamera: (cam: Partial<CameraState>) => void;
-  panCamera: (dx: number, dy: number) => void;
-  zoomCamera: (delta: number, anchorX: number, anchorY: number) => void;
-  setHoveredTile: (tile: { row: number; col: number } | null) => void;
-  setHoveredEntity: (entity: SelectedEntity | null) => void;
-  selectEntity: (entity: SelectedEntity | null) => void;
-  openPanel: (panel: PanelMode) => void;
-  closePanel: () => void;
-
-  // Simulation actions
-  updateAgentPosition: (agentId: string, patch: Partial<AgentPosition>) => void;
-  setAgentAnim: (
-    agentId: string,
-    state: AgentAnimState,
-    facing?: AgentFacing,
-  ) => void;
-  advanceAgentFrame: (agentId: string) => void;
-  setAgentTask: (agentId: string, task: string | undefined) => void;
-  moveAgentToRoom: (agentId: string, roomId: string) => void;
-  addSimEvent: (event: Omit<SimEvent, "timestamp">) => void;
-  tickSimulation: () => void;
-  setSimSpeed: (speed: 1 | 2 | 4) => void;
-  toggleSimRunning: () => void;
 }
 
 const initial = createDefaultShipLayout();
 
-export const useBaseStore = create<BaseStore>((set, get) => ({
-  // Data
+export const useBaseStore = create<BaseStore>((set) => ({
   ship: initial.ship,
   rooms: initial.rooms,
   baseResources: {
@@ -165,30 +86,10 @@ export const useBaseStore = create<BaseStore>((set, get) => ({
     credits: 1850,
   },
 
-  // Legacy selection
   selectedCellPos: null,
   selectedRoomId: null,
   buildMenuOpen: false,
 
-  // Game engine state
-  agentPositions: makeInitialPositions(initial.rooms),
-  camera: {
-    panX: 0,
-    panY: 0,
-    zoom: 1,
-  },
-  simulation: {
-    running: true,
-    tickCount: 0,
-    speed: 1,
-    events: [],
-  },
-  hoveredTile: null,
-  hoveredEntity: null,
-  selectedEntity: null,
-  panelOpen: null,
-
-  // Legacy actions
   selectCell: (pos) =>
     set({ selectedCellPos: pos, selectedRoomId: null, buildMenuOpen: false }),
 
@@ -295,118 +196,5 @@ export const useBaseStore = create<BaseStore>((set, get) => ({
             }
           : r,
       ),
-    })),
-
-  // Engine actions
-  setCamera: (cam) =>
-    set((state) => ({ camera: { ...state.camera, ...cam } })),
-
-  panCamera: (dx, dy) =>
-    set((state) => ({
-      camera: {
-        ...state.camera,
-        panX: state.camera.panX + dx,
-        panY: state.camera.panY + dy,
-      },
-    })),
-
-  zoomCamera: (delta, anchorX, anchorY) =>
-    set((state) => {
-      const oldZoom = state.camera.zoom;
-      const newZoom = Math.max(0.4, Math.min(2.5, oldZoom * (1 + delta)));
-      const ratio = newZoom / oldZoom;
-      // Keep the anchor point fixed under the cursor
-      const panX = anchorX - (anchorX - state.camera.panX) * ratio;
-      const panY = anchorY - (anchorY - state.camera.panY) * ratio;
-      return { camera: { panX, panY, zoom: newZoom } };
-    }),
-
-  setHoveredTile: (tile) => set({ hoveredTile: tile }),
-
-  setHoveredEntity: (entity) => set({ hoveredEntity: entity }),
-
-  selectEntity: (entity) =>
-    set({
-      selectedEntity: entity,
-      panelOpen: entity?.type ?? null,
-    }),
-
-  openPanel: (panel) => set({ panelOpen: panel }),
-
-  closePanel: () => set({ panelOpen: null, selectedEntity: null }),
-
-  // Simulation
-  updateAgentPosition: (agentId, patch) =>
-    set((state) => ({
-      agentPositions: state.agentPositions.map((p) =>
-        p.agentId === agentId ? { ...p, ...patch } : p,
-      ),
-    })),
-
-  setAgentAnim: (agentId, animState, facing) =>
-    set((state) => ({
-      agentPositions: state.agentPositions.map((p) =>
-        p.agentId === agentId
-          ? { ...p, animState, ...(facing ? { facing } : {}) }
-          : p,
-      ),
-    })),
-
-  advanceAgentFrame: (agentId) =>
-    set((state) => ({
-      agentPositions: state.agentPositions.map((p) =>
-        p.agentId === agentId
-          ? { ...p, animFrame: (p.animFrame + 1) % 4 }
-          : p,
-      ),
-    })),
-
-  setAgentTask: (agentId, task) =>
-    set((state) => ({
-      agentPositions: state.agentPositions.map((p) =>
-        p.agentId === agentId ? { ...p, currentTask: task } : p,
-      ),
-    })),
-
-  moveAgentToRoom: (agentId, roomId) => {
-    const state = get();
-    const room = state.rooms.find((r) => r.id === roomId);
-    if (!room) return;
-    const center = getRoomCenterTile(room);
-    set({
-      agentPositions: state.agentPositions.map((p) =>
-        p.agentId === agentId
-          ? {
-              ...p,
-              targetTileCol: center.col,
-              targetTileRow: center.row,
-              animState: "walking",
-            }
-          : p,
-      ),
-    });
-  },
-
-  addSimEvent: (event) =>
-    set((state) => {
-      const newEvent: SimEvent = { ...event, timestamp: Date.now() };
-      const events = [newEvent, ...state.simulation.events].slice(0, 30);
-      return { simulation: { ...state.simulation, events } };
-    }),
-
-  tickSimulation: () =>
-    set((state) => ({
-      simulation: {
-        ...state.simulation,
-        tickCount: state.simulation.tickCount + 1,
-      },
-    })),
-
-  setSimSpeed: (speed) =>
-    set((state) => ({ simulation: { ...state.simulation, speed } })),
-
-  toggleSimRunning: () =>
-    set((state) => ({
-      simulation: { ...state.simulation, running: !state.simulation.running },
     })),
 }));

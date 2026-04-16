@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, Ship, Cpu } from "lucide-react";
+import { LayoutGrid, Cpu } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/", label: "Cockpit", icon: LayoutGrid, match: (p: string) => p === "/" },
-  { href: "/base", label: "Ship base", icon: Ship, match: (p: string) => p.startsWith("/base") },
   { href: "/cyberware", label: "Cyberware", icon: Cpu, match: (p: string) => p.startsWith("/cyberware") },
 ];
 

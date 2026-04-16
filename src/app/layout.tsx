@@ -24,8 +24,8 @@ const merriweather = Merriweather({
 });
 
 export const metadata: Metadata = {
-  title: "Agent command center",
-  description: "RPG-style AI agent management dashboard",
+  title: "Agent Command HQ",
+  description: "Business command center for AI agent operations",
 };
 
 export default function RootLayout({

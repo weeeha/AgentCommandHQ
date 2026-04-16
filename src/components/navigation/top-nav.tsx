@@ -1,25 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { Shield, Activity } from "lucide-react";
 import { NavTabs } from "./nav-tabs";
 import { AgentSwitcher } from "./agent-switcher";
 import { useCockpitStore } from "@/store/use-cockpit";
 
 export function TopNav() {
-  const pathname = usePathname();
   const [time, setTime] = useState("");
   const resources = useCockpitStore((s) => s.resources);
 
   const credits = resources.find((r) => r.key === "credits");
 
-  // Hide on the full-screen game view at /base. Computed before the effect
-  // so hook count stays stable across route changes.
-  const hidden = pathname === "/base";
-
   useEffect(() => {
-    if (hidden) return;
     const update = () => {
       setTime(
         new Date().toLocaleTimeString("en-US", {
@@ -32,9 +25,7 @@ export function TopNav() {
     update();
     const interval = setInterval(update, 30000);
     return () => clearInterval(interval);
-  }, [hidden]);
-
-  if (hidden) return null;
+  }, []);
 
   return (
     <header
