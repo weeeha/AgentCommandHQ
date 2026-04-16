@@ -60,6 +60,8 @@
   --color-xp: var(--xp);
   --color-xp-track: var(--xp-track);
   --color-critical: var(--critical);
+  --color-violet: var(--violet);
+  --color-neon-glow: var(--neon-glow);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -123,54 +125,63 @@
    ───────────────────────────────────────────────────────────── */
 
 .dark {
-  --background: oklch(0.16 0.006 270);
-  --foreground: oklch(0.93 0 0);
-  --card: oklch(0.22 0.012 270);
-  --card-foreground: oklch(0.93 0 0);
-  --popover: oklch(0.23 0.012 270);
-  --popover-foreground: oklch(0.93 0 0);
-  --primary: oklch(0.72 0.22 330);
+  /* ── Style C — Neon Division ──
+     canvas #06060E · panels #10132A · raised #1A1F3D
+     cyan #29E6FF · magenta #FF3D88 · violet #B47CFF
+     yellow #F5E663 · green #5FCC8A · white #EDF2FF · muted #6A74A8 */
+
+  --background: oklch(0.10 0.02 270);         /* #06060E */
+  --foreground: oklch(0.96 0.01 270);         /* #EDF2FF */
+  --card: oklch(0.16 0.045 275);              /* #10132A */
+  --card-foreground: oklch(0.96 0.01 270);
+  --popover: oklch(0.19 0.05 275);            /* slightly raised */
+  --popover-foreground: oklch(0.96 0.01 270);
+  --primary: oklch(0.70 0.24 1);              /* #FF3D88 magenta */
   --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.26 0.012 270);
-  --secondary-foreground: oklch(0.88 0 0);
-  --muted: oklch(0.28 0.012 270);
-  --muted-foreground: oklch(0.60 0.012 270);
-  --accent: oklch(0.78 0.155 180);
-  --accent-foreground: oklch(0.14 0.01 270);
+  --secondary: oklch(0.22 0.05 275);          /* #1A1F3D raised */
+  --secondary-foreground: oklch(0.90 0.015 270);
+  --muted: oklch(0.20 0.04 275);
+  --muted-foreground: oklch(0.62 0.06 265);   /* #6A74A8 */
+  --accent: oklch(0.84 0.16 215);             /* #29E6FF cyan */
+  --accent-foreground: oklch(0.10 0.02 270);
   --destructive: oklch(0.63 0.24 25);
-  --border: oklch(0.34 0.012 270);
-  --input: oklch(0.30 0.012 270);
-  --ring: oklch(0.72 0.22 330);
+  --border: oklch(0.30 0.05 275);
+  --input: oklch(0.24 0.05 275);
+  --ring: oklch(0.70 0.24 1);
 
   /* Status colors */
-  --success: oklch(0.72 0.19 155);
+  --success: oklch(0.78 0.18 150);            /* #5FCC8A */
   --success-foreground: oklch(0.18 0.04 155);
-  --warning: oklch(0.82 0.17 85);
+  --warning: oklch(0.90 0.17 100);            /* #F5E663 */
   --warning-foreground: oklch(0.22 0.04 85);
-  --info: oklch(0.68 0.14 250);
-  --info-foreground: oklch(0.18 0.04 250);
+  --info: oklch(0.84 0.16 215);               /* cyan = info */
+  --info-foreground: oklch(0.10 0.02 270);
   --critical: oklch(0.63 0.24 25);
 
-  /* XP */
-  --xp: oklch(0.78 0.155 180);
-  --xp-track: oklch(0.22 0.03 180);
+  /* Cyberpunk accents */
+  --violet: oklch(0.70 0.21 295);             /* #B47CFF */
+  --neon-glow: 0 0 12px oklch(0.84 0.16 215 / 0.6);
+
+  /* XP — violet to match rewards from Style C */
+  --xp: oklch(0.70 0.21 295);
+  --xp-track: oklch(0.22 0.06 295);
 
   /* Charts */
-  --chart-1: oklch(0.72 0.22 330);
-  --chart-2: oklch(0.78 0.155 180);
-  --chart-3: oklch(0.72 0.19 155);
-  --chart-4: oklch(0.82 0.17 85);
-  --chart-5: oklch(0.68 0.14 250);
+  --chart-1: oklch(0.70 0.24 1);              /* magenta */
+  --chart-2: oklch(0.84 0.16 215);            /* cyan */
+  --chart-3: oklch(0.78 0.18 150);            /* green */
+  --chart-4: oklch(0.90 0.17 100);            /* yellow */
+  --chart-5: oklch(0.70 0.21 295);            /* violet */
 
   /* Sidebar */
-  --sidebar: oklch(0.155 0.008 270);
-  --sidebar-foreground: oklch(0.93 0 0);
-  --sidebar-primary: oklch(0.72 0.22 330);
+  --sidebar: oklch(0.13 0.03 272);
+  --sidebar-foreground: oklch(0.96 0.01 270);
+  --sidebar-primary: oklch(0.70 0.24 1);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.22 0.008 270);
-  --sidebar-accent-foreground: oklch(0.88 0 0);
-  --sidebar-border: oklch(0.28 0.01 270);
-  --sidebar-ring: oklch(0.72 0.22 330);
+  --sidebar-accent: oklch(0.18 0.04 275);
+  --sidebar-accent-foreground: oklch(0.90 0.015 270);
+  --sidebar-border: oklch(0.28 0.05 275);
+  --sidebar-ring: oklch(0.70 0.24 1);
 }
 
 /* ─────────────────────────────────────────────────────────────

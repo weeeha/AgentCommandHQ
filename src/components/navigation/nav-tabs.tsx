@@ -2,12 +2,63 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, Cpu } from "lucide-react";
+import {
+  Home,
+  LayoutGrid,
+  Ship,
+  KanbanSquare,
+  MessageSquare,
+  Cpu,
+  ClipboardList,
+  GitFork,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", label: "Cockpit", icon: LayoutGrid, match: (p: string) => p === "/" },
-  { href: "/cyberware", label: "Cyberware", icon: Cpu, match: (p: string) => p.startsWith("/cyberware") },
+  { href: "/", label: "Home", icon: Home, match: (p: string) => p === "/" },
+  {
+    href: "/cockpit",
+    label: "Cockpit",
+    icon: LayoutGrid,
+    match: (p: string) => p.startsWith("/cockpit"),
+  },
+  {
+    href: "/tasks",
+    label: "Tasks",
+    icon: KanbanSquare,
+    match: (p: string) => p.startsWith("/tasks"),
+  },
+  {
+    href: "/chat",
+    label: "Chat",
+    icon: MessageSquare,
+    match: (p: string) => p.startsWith("/chat"),
+  },
+  {
+    href: "/base",
+    label: "Ship base",
+    icon: Ship,
+    match: (p: string) => p.startsWith("/base"),
+  },
+  {
+    href: "/missions",
+    label: "Missions",
+    icon: ClipboardList,
+    match: (p: string) => p.startsWith("/missions"),
+  },
+  {
+    href: "/cyberware",
+    label: "Cyberware",
+    icon: Cpu,
+    match: (p: string) =>
+      p.startsWith("/cyberware") && !p.startsWith("/cyberware/skills"),
+  },
+  {
+    href: "/cyberware/skills",
+    label: "Skill Tree",
+    icon: GitFork,
+    match: (p: string) => p.startsWith("/cyberware/skills"),
+  },
 ];
 
 export function NavTabs() {
@@ -28,7 +79,7 @@ export function NavTabs() {
               "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
               active
                 ? "text-primary bg-primary/10"
-                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50",
             )}
             aria-current={active ? "page" : undefined}
           >

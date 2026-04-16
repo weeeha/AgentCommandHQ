@@ -229,6 +229,88 @@ export interface LogEvent {
 }
 
 // ─────────────────────────────────────────────────────────────
+// Feed (home page activity timeline)
+// ─────────────────────────────────────────────────────────────
+
+export type FeedItemKind =
+  | "mission-complete"
+  | "level-up"
+  | "flag"
+  | "deploy"
+  | "review-request"
+  | "achievement"
+  | "alert"
+  | "system";
+
+export interface FeedItem {
+  id: string;
+  at: string; // ISO timestamp
+  kind: FeedItemKind;
+  title: string;
+  body: string;
+  agentCallsign?: string;
+  agentClassKey?: AgentClassKey;
+  linkLabel?: string;
+  linkHref?: string;
+  metric?: { value: string; label: string; tone?: "up" | "down" | "neutral" };
+}
+
+// ─────────────────────────────────────────────────────────────
+// Tasks (kanban)
+// ─────────────────────────────────────────────────────────────
+
+export type TaskStatus =
+  | "queued"
+  | "in-progress"
+  | "needs-review"
+  | "done"
+  | "blocked";
+
+export type TaskPriority = "p0" | "p1" | "p2" | "p3";
+
+export interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  assignedAgentId?: string;
+  tags: string[];
+  estimatedMinutes: number;
+  dueAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  linkedMissionId?: string;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Chat (multi-thread AI chat)
+// ─────────────────────────────────────────────────────────────
+
+export type ChatRole = "user" | "agent" | "system";
+
+export interface ChatMessage {
+  id: string;
+  role: ChatRole;
+  content: string;
+  at: string;
+  /** Which agent answered, if role === "agent" */
+  agentId?: string;
+}
+
+export interface ChatThread {
+  id: string;
+  title: string;
+  /** Which agent this thread is primarily with */
+  agentId: string;
+  /** Last-updated timestamp for sort order */
+  updatedAt: string;
+  messages: ChatMessage[];
+  unread?: number;
+  pinned?: boolean;
+}
+
+// ─────────────────────────────────────────────────────────────
 // Domain theme
 // ─────────────────────────────────────────────────────────────
 
