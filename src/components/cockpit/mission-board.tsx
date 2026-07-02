@@ -7,8 +7,6 @@ import { MissionRow } from "./mission-row";
 
 export function MissionBoard() {
   const missions = useCockpitStore((s) => s.missions);
-  const selectedMissionId = useCockpitStore((s) => s.selectedMissionId);
-  const selectMission = useCockpitStore((s) => s.selectMission);
 
   return (
     <Card className="border-[0.5px] bg-card">
@@ -28,16 +26,7 @@ export function MissionBoard() {
             </div>
           ) : (
             missions.map((mission) => (
-              <MissionRow
-                key={mission.id}
-                mission={mission}
-                isSelected={selectedMissionId === mission.id}
-                onSelect={() =>
-                  selectMission(
-                    selectedMissionId === mission.id ? null : mission.id
-                  )
-                }
-              />
+              <MissionRow key={mission.id} mission={mission} />
             ))
           )}
         </div>
