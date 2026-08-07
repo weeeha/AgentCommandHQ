@@ -1,11 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, Lock } from "lucide-react";
 import { useCockpitStore } from "@/store/use-cockpit";
 import {
-  getSpecTree,
   SKILL_CATEGORY_LABELS,
   type SkillCategory,
   type SkillNode,
@@ -25,14 +24,14 @@ export function SkillTreeScreen({ agentId }: SkillTreeScreenProps) {
   const resolvedId = agentId ?? storeAgentId ?? agents[0]?.id;
   const agent = agents.find((a) => a.id === resolvedId);
 
+  const tree = useCockpitStore((s) =>
+    agent ? s.specTrees[agent.id] : null
+  );
+  const unlockSkillNode = useCockpitStore((s) => s.unlockSkillNode);
+
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<SkillCategory | null>(
     null
-  );
-
-  const tree = useMemo(
-    () => (agent ? getSpecTree(agent.id, agent.classKey) : null),
-    [agent]
   );
 
   if (!agent || !tree) {
@@ -307,7 +306,11 @@ export function SkillTreeScreen({ agentId }: SkillTreeScreenProps) {
         {/* Right — node detail */}
         <aside className="px-4 py-5 border-l-[0.5px] border-border max-lg:border-l-0 max-lg:border-t-[0.5px] max-lg:order-2">
           {selectedNode ? (
-            <NodeDetail node={selectedNode} />
+            <NodeDetail
+              node={selectedNode}
+              availablePoints={tree.availablePoints}
+              onUnlock={(id) => unlockSkillNode(agent.id, id)}
+            />
           ) : (
             <Card className="border-[0.5px] bg-card p-4">
               <h3 className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground mb-2">
@@ -324,7 +327,15 @@ export function SkillTreeScreen({ agentId }: SkillTreeScreenProps) {
   );
 }
 
-function NodeDetail({ node }: { node: SkillNode }) {
+function NodeDetail({
+  node,
+  availablePoints,
+  onUnlock,
+}: {
+  node: SkillNode;
+  availablePoints: number;
+  onUnlock: (nodeId: string) => void;
+}) {
   const stateLabel =
     node.state === "unlocked"
       ? "Unlocked"
@@ -389,10 +400,12 @@ function NodeDetail({ node }: { node: SkillNode }) {
 
       {node.state === "available" && (
         <Button
+          onClick={() => onUnlock(node.id)}
+          disabled={node.cost > availablePoints}
           className="w-full h-9 font-mono text-[11px] uppercase tracking-[0.14em] shadow-[0_0_16px_theme(colors.primary/35%)]"
           size="sm"
         >
-          Unlock
+          {node.cost > availablePoints ? "Need more points" : "Unlock"}
         </Button>
       )}
       {node.state === "locked" && (

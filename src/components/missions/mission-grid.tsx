@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { mockMissions } from "@/data";
 import { mockMissionDetails } from "@/data/mock-mission-details";
+import { useCockpitStore } from "@/store/use-cockpit";
 import { DifficultyStars } from "@/components/primitives/difficulty-stars";
 import { Pill } from "@/components/primitives/pill";
 import { Card } from "@/components/ui/card";
 
 export function MissionGrid() {
+  const missions = useCockpitStore((s) => s.missions);
+
   return (
     <div className="px-6 pt-5 pb-10 max-w-7xl mx-auto">
       <div className="flex items-baseline justify-between mb-5">
@@ -20,12 +22,12 @@ export function MissionGrid() {
           </h2>
         </div>
         <span className="font-mono text-[12px] text-muted-foreground">
-          {mockMissions.length} available
+          {missions.length} available
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {mockMissions.map((mission) => {
+        {missions.map((mission) => {
           const detail = mockMissionDetails[mission.id];
           const primaryTag = detail?.tags[0];
 

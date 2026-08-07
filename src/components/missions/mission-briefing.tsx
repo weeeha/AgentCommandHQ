@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { ChevronLeft, Check, Lock, Plus } from "lucide-react";
-import { mockMissions, mockAgents } from "@/data";
+import { mockAgents, mockMissions } from "@/data";
 import { mockMissionDetails } from "@/data/mock-mission-details";
+import { useCockpitStore } from "@/store/use-cockpit";
 import { DifficultyStars } from "@/components/primitives/difficulty-stars";
 import { Pill } from "@/components/primitives/pill";
 import { Card } from "@/components/ui/card";
@@ -15,6 +16,9 @@ interface MissionBriefingProps {
 }
 
 export function MissionBriefing({ missionId }: MissionBriefingProps) {
+  const router = useRouter();
+  const storeMissions = useCockpitStore((s) => s.missions);
+  const deployMission = useCockpitStore((s) => s.deployMission);
   const mission = mockMissions.find((m) => m.id === missionId);
   const detail = mockMissionDetails[missionId];
 
@@ -22,9 +26,18 @@ export function MissionBriefing({ missionId }: MissionBriefingProps) {
     notFound();
   }
 
+  const isDeployable = storeMissions.some((m) => m.id === missionId);
   const recommendedAgent = detail.recommendedAgentId
     ? mockAgents.find((a) => a.id === detail.recommendedAgentId)
     : undefined;
+
+  const handleDeploy = () => {
+    if (!isDeployable || !recommendedAgent) return;
+    deployMission(mission.id, [recommendedAgent.id]);
+    router.push("/cockpit");
+  };
+
+  const handleAbort = () => router.push("/missions");
 
   return (
     <div className="px-6 pt-4 pb-10 max-w-7xl mx-auto">
@@ -225,12 +238,15 @@ export function MissionBriefing({ missionId }: MissionBriefingProps) {
           {/* Actions */}
           <div className="space-y-2">
             <Button
+              onClick={handleDeploy}
+              disabled={!recommendedAgent || !isDeployable}
               className="w-full h-10 font-mono text-[12px] uppercase tracking-[0.14em] shadow-[0_0_20px_theme(colors.primary/40%)] hover:shadow-[0_0_28px_theme(colors.primary/55%)]"
               size="lg"
             >
-              Deploy
+              {!isDeployable ? "Already Deployed" : "Deploy"}
             </Button>
             <Button
+              onClick={handleAbort}
               variant="outline"
               className="w-full h-9 font-mono text-[11px] uppercase tracking-[0.14em] border-border/80"
             >

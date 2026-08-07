@@ -1,26 +1,24 @@
 "use client";
 
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { Mission } from "@/types";
 
 interface MissionRowProps {
   mission: Mission;
-  isSelected: boolean;
-  onSelect: () => void;
 }
 
-export function MissionRow({ mission, isSelected, onSelect }: MissionRowProps) {
+export function MissionRow({ mission }: MissionRowProps) {
   const stars = Array.from({ length: 5 }, (_, i) => i < mission.tier);
 
   return (
-    <button
-      onClick={onSelect}
+    <Link
+      href={`/missions/${mission.id}`}
       className={cn(
-        "w-full text-left py-3 px-3 -mx-3 rounded-lg transition-colors duration-150",
+        "block w-full text-left py-3 px-3 -mx-3 rounded-lg transition-colors duration-150",
         "border-b-[0.5px] border-border last:border-b-0",
         "hover:bg-secondary/50",
-        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-        isSelected && "bg-secondary/70"
+        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
       )}
     >
       {/* Title + stars */}
@@ -57,6 +55,6 @@ export function MissionRow({ mission, isSelected, onSelect }: MissionRowProps) {
           </>
         )}
       </div>
-    </button>
+    </Link>
   );
 }
