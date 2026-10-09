@@ -18,10 +18,10 @@ The cockpit view at `/cockpit`, with the sample squad data the app ships with.
 - `/cockpit` — Squad roster, resource meters, active operations, dossier, log
 - `/tasks` — Kanban board with drag-and-drop (Queued / In progress / Needs review / Done / Blocked)
 - `/chat` — Multi-thread AI chat interface with sidebar of conversations
-- `/missions` — Mission board grid; `/missions/[id]` is the briefing for one mission
+- `/missions` - Mission board grid; `/missions/[id]` is the briefing for one mission
 - `/base` — Ship base room plan with type-colored rooms and agent assignments
 - `/cyberware` — Agent cyberware profile with 8-region subsystem visualization
-- `/cyberware/skills` — Skill tree with node unlocking (`?agent=<id>` selects an agent)
+- `/cyberware/skills` - Skill tree with node unlocking (`?agent=<id>` selects an agent)
 
 ## Stack
 
