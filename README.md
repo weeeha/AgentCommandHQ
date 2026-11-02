@@ -1,5 +1,13 @@
 # Agent Command HQ
 
+**Problem.** A squad of AI agents needs one place where a business user can see who is doing what, what is queued and what needs review.
+
+**Idea.** Run the squad like a crew: each agent has a dossier, missions to deploy on, a room in a ship base and a cyberware skill tree, all in one cockpit.
+
+**Built.** A Next.js 16, React 19, Tailwind v4 and shadcn/ui app with Zustand state and eight routes (home feed, cockpit, Kanban tasks, chat, missions, base, cyberware, skill tree), running on sample squad data. Live at https://agent-command-hq.vercel.app. 14 commits on 7 days, Apr 16 to Oct 20, 2026.
+
+**Decision.** This deployment keeps the business cockpit only. The RimWorld-style game view and its canvas engine were removed here, and the gamified variant is the separate AgentRPG project.
+
 Business-facing command dashboard for managing an AI agent squad.
 
 ![Home feed: activity timeline with squad, active ops and shortcuts panels](docs/screenshots/home-feed.webp)
